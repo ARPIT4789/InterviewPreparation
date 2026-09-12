@@ -28,6 +28,10 @@ app.use(
 app.use(express.json());
 
 // SESSION
+// Trust Render's reverse proxy so secure cookies work correctly
+app.set("trust proxy", 1);
+
+// SESSION
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -40,7 +44,8 @@ app.use(
 
     cookie: {
       httpOnly: true,
-      sameSite: "lax",
+      sameSite:
+        process.env.NODE_ENV === "production" ? "none" : "lax",
       secure:
         process.env.NODE_ENV === "production",
       maxAge: 1000 * 60 * 60 * 24 * 7
